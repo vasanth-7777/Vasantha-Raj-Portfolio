@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Interactive Circle Colour Reveal Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#171513;
+  --panel:#221f1c;
+  --ink:#ece7e1;
+  --mute:#9e978f;
+  --brass:#d8b45e;
+  --line:#3a3530;
+}
+[data-theme=light]{
+  --bg:#f4f0e8;
+  --panel:#ffffff;
+  --ink:#1d1b19;
+  --mute:#6e6860;
+  --brass:#a37517;
+  --line:#dcd5c9;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:"Bricolage Grotesque",sans-serif;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:2rem 1rem;
+  transition:background .3s,color .3s;
+}
+header{
+  max-width:800px;
+  text-align:center;
+  margin-bottom:2rem;
+}
+h1{
+  font-size:clamp(1.8rem,4vw,2.8rem);
+  font-weight:800;
+  margin-bottom:.5rem;
+}
+p.sub{
+  color:var(--mute);
+  font-size:1.05rem;
+}
+.controls{
+  display:flex;
+  gap:1rem;
+  flex-wrap:wrap;
+  justify-content:center;
+  align-items:center;
+  background:var(--panel);
+  border:1px solid var(--line);
+  padding:.8rem 1.4rem;
+  border-radius:99px;
+  margin-bottom:2.5rem;
+  box-shadow:0 10px 25px rgba(0,0,0,.25);
+}
+.controls label{
+  display:flex;
+  align-items:center;
+  gap:.6rem;
+  font-size:.9rem;
+  font-weight:600;
+}
+.controls input[type=range]{
+  accent-color:var(--brass);
+  cursor:pointer;
+}
+.btn{
+  background:var(--ink);
+  color:var(--bg);
+  border:0;
+  padding:.45rem 1rem;
+  border-radius:99px;
+  font-weight:600;
+  font-size:.85rem;
+  cursor:pointer;
+  transition:transform .15s;
+}
+.btn:hover{transform:scale(1.04)}
+.btn-ghost{
+  background:transparent;
+  color:var(--ink);
+  border:1px solid var(--line);
+}
+
+.gallery{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(320px,460px));
+  gap:2.5rem;
+  width:100%;
+  max-width:1000px;
+  justify-content:center;
+}
+.card{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:24px;
+  padding:1.5rem;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  box-shadow:0 20px 40px rgba(0,0,0,.3);
+}
+.card h2{
+  font-size:1.25rem;
+  margin-bottom:.4rem;
+}
+.card p{
+  font-size:.85rem;
+  color:var(--mute);
+  margin-bottom:1.2rem;
+  text-align:center;
+}
+
+/* The Magic Reveal Container */
+@property --demo-r {
+  syntax: '<length>';
+  inherits: true;
+  initial-value: 0px;
+}
+.reveal-box{
+  position:relative;
+  width:100%;
+  max-width:400px;
+  border-radius:18px;
+  overflow:hidden;
+  cursor:crosshair;
+  touch-action:none;
+  user-select:none;
+  -webkit-user-select:none;
+  background:#110f0e;
+  --demo-r:0px;
+  --max-r:120px;
+}
+.reveal-box.has-fade{
+  -webkit-mask-image:linear-gradient(#000 80%,transparent);
+  mask-image:linear-gradient(#000 80%,transparent);
+}
+.reveal-box .img-bw{
+  display:block;
+  width:100%;
+  height:auto;
+  pointer-events:none;
+}
+.reveal-box .img-color{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  pointer-events:none;
+  opacity:0;
+  clip-path:circle(var(--demo-r, 0px) at var(--reveal-x, -999px) var(--reveal-y, -999px));
+  -webkit-clip-path:circle(var(--demo-r, 0px) at var(--reveal-x, -999px) var(--reveal-y, -999px));
+  transition:--demo-r .24s cubic-bezier(.2,.8,.2,1), opacity .22s ease-out;
+  will-change:clip-path, opacity;
+}
+.reveal-box.is-active{
+  --demo-r:var(--max-r);
+}
+.reveal-box.is-active .img-color{
+  opacity:1;
+}
+.reveal-lens{
+  position:absolute;
+  top:0;
+  left:0;
+  width:calc(var(--demo-r, 0px) * 2);
+  height:calc(var(--demo-r, 0px) * 2);
+  border-radius:50%;
+  border:1.5px solid rgba(255,255,255,.4);
+  box-shadow:0 0 14px rgba(255,255,255,.2), inset 0 0 10px rgba(255,255,255,.12);
+  pointer-events:none;
+  transform:translate(calc(var(--reveal-x, -999px) - var(--demo-r, 0px)), calc(var(--reveal-y, -999px) - var(--demo-r, 0px)));
+  opacity:0;
+  transition:--demo-r .24s cubic-bezier(.2,.8,.2,1), opacity .22s ease-out;
+  will-change:transform, opacity;
+}
+.reveal-box.is-active .reveal-lens{
+  opacity:1;
+}
+.hide-lens .reveal-lens{
+  display:none!important;
+}
+
+footer{
+  margin-top:3rem;
+  font-size:.9rem;
+  color:var(--mute);
+}
+footer a{
+  color:var(--brass);
+  text-decoration:none;
+  font-weight:600;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Circle Cursor Colour Reveal</h1>
+  <p class="sub">Move your cursor over either image to reveal the rich colour version inside a crisp circle around the cursor.</p>
+</header>
+
+<div class="controls">
+  <label>Circle Radius: <input id="radiusSlider" type="range" min="60" max="220" value="120"> <span id="radiusVal">120px</span></label>
+  <button id="ringBtn" class="btn btn-ghost">Toggle Lens Ring</button>
+  <button id="themeBtn" class="btn">Toggle Theme</button>
+  <a href="index.html" class="btn btn-ghost" style="text-decoration:none">← View Portfolio</a>
+</div>
+
+<main class="gallery">
+  <div class="card">
+    <h2>Portfolio Cutout Portrait</h2>
+    <p>Transparent cutout blended seamlessly with gradient bottom fade</p>
+    <div class="reveal-box has-fade" aria-label="Portrait cutout reveal">
+      <img class="img-bw" src="assets/img/vasanth-cut.webp" alt="Vasanth B&W">
+      <img class="img-color" src="assets/img/vasanth-cut-color.webp" alt="Vasanth Colour">
+      <div class="reveal-lens" aria-hidden="true"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Original Full Portrait</h2>
+    <p>Complete frame with original background and full lighting</p>
+    <div class="reveal-box" aria-label="Original full photo reveal">
+      <img class="img-bw" src="assets/img/vasanth-bw-full.png" alt="Vasanth full B&W">
+      <img class="img-color" src="assets/img/vasanth-color-full.png" alt="Vasanth full Colour">
+      <div class="reveal-lens" aria-hidden="true"></div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <p>Crafted for <a href="index.html">Vasanth's Portfolio</a></p>
+</footer>
+
+<script>
+  var boxes = document.querySelectorAll('.reveal-box');
+  boxes.forEach(function(box) {
+    var raf = null, rx = -999, ry = -999;
+    function applyPos() {
+      box.style.setProperty('--reveal-x', rx + 'px');
+      box.style.setProperty('--reveal-y', ry + 'px');
+      raf = null;
+    }
+    function updateCoords(e) {
+      var r = box.getBoundingClientRect();
+      rx = Math.round(e.clientX - r.left);
+      ry = Math.round(e.clientY - r.top);
+    }
+    box.addEventListener('pointerenter', function(e) {
+      updateCoords(e);
+      box.style.setProperty('--reveal-x', rx + 'px');
+      box.style.setProperty('--reveal-y', ry + 'px');
+      box.classList.add('is-active');
+    });
+    box.addEventListener('pointermove', function(e) {
+      updateCoords(e);
+      if (!box.classList.contains('is-active')) box.classList.add('is-active');
+      if (!raf) raf = requestAnimationFrame(applyPos);
+    });
+    function deactivate() {
+      box.classList.remove('is-active');
+      if (raf) { cancelAnimationFrame(raf); raf = null; }
+    }
+    box.addEventListener('pointerleave', deactivate);
+    box.addEventListener('pointercancel', deactivate);
+    box.addEventListener('pointerup', deactivate);
+  });
+
+  // Slider controls
+  var slider = document.getElementById('radiusSlider');
+  var radiusVal = document.getElementById('radiusVal');
+  slider.addEventListener('input', function() {
+    var val = slider.value + 'px';
+    radiusVal.textContent = val;
+    boxes.forEach(function(b) {
+      b.style.setProperty('--max-r', val);
+    });
+  });
+
+  // Toggle Lens Ring
+  var ringBtn = document.getElementById('ringBtn');
+  var showRing = true;
+  ringBtn.addEventListener('click', function() {
+    showRing = !showRing;
+    document.body.classList.toggle('hide-lens', !showRing);
+    ringBtn.textContent = showRing ? 'Hide Lens Ring' : 'Show Lens Ring';
+  });
+
+  // Toggle Theme
+  var themeBtn = document.getElementById('themeBtn');
+  themeBtn.addEventListener('click', function() {
+    var isLight = document.documentElement.getAttribute('data-theme') === 'light';
+    if (isLight) {
+      document.documentElement.removeAttribute('data-theme');
+    } else {
+      document.documentElement.setAttribute('data-theme', 'light');
+    }
+  });
+</script>
+</body>
+</html>
