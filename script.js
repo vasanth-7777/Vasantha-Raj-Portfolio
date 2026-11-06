@@ -10,7 +10,7 @@
     var pills=$$('.intro-pill',stack);
     pills.forEach(function(pill,i){
       if(i>0){
-        pill.style.transform='translateY(-'+(i*40)+'px) scale('+(1-i*0.04)+')';
+        var yGap = window.innerWidth <= 768 ? 24 : 40; pill.style.transform='translateY(-'+(i*yGap)+'px) scale('+(1-i*0.04)+')';
         pill.style.opacity='0';
       }
     });
@@ -29,7 +29,7 @@
         if(progress>threshold){
           pill.style.opacity='1';
           var factor=Math.min((progress-threshold)/0.35,1);
-          var curY=-(i*40)*(1-factor);
+          var yGap = window.innerWidth <= 768 ? 24 : 40; var curY=-(i*yGap)*(1-factor);
           var curScale=(1-i*0.04)+(i*0.04*factor);
           pill.style.transform='translateY('+curY+'px) scale('+curScale+')';
         }
@@ -122,7 +122,7 @@
       room.scrollTop=0;
       room.classList.remove('leaving');
       room.classList.add('entering');
-      document.body.style.overflow='hidden';
+      document.body.classList.add('room-open'); document.body.style.overflow='hidden';
       loadVideos(room);
       var b=$('.back',room);
       if(b)b.focus({preventScroll:true});
@@ -144,7 +144,7 @@
       $$('video',room).forEach(function(v){v.pause()});
       room.hidden=true;
       room.classList.remove('leaving');
-      document.body.style.overflow='';
+      document.body.classList.remove('room-open'); document.body.style.overflow='';
       current=null;
 
       if(doorsEl)doorsEl.classList.remove('zooming');
@@ -329,7 +329,8 @@
   if (ropeContainer && ropePath && ropeHandle && ropeChain) {
     var NUM_LINKS = 8;
     var NUM_POINTS = NUM_LINKS + 1; // 8 nodes: Point 0 (ceiling anchor) to Point 7 (Batarang)
-    var restLength = Math.max(180, Math.min(window.innerHeight * 0.28, 240));
+    function calcRestLength(){ return window.innerWidth <= 768 ? 95 : Math.max(180, Math.min(window.innerHeight * 0.28, 240)); }
+    var restLength = calcRestLength();
     var segLen = restLength / NUM_LINKS;
 
     // Create chain link DOM elements
@@ -583,6 +584,7 @@
         solveConstraints(true);
         renderRope();
       } else {
+        if (e.pointerType === 'touch') return;
         // Ambient breeze: nudge nearby links when cursor wanders near the chain
         var anchor = getAnchorScreenPos();
         var nearAny = false;
@@ -633,7 +635,7 @@
     });
 
     window.addEventListener('resize', function(){
-      restLength = Math.max(180, Math.min(window.innerHeight * 0.28, 240));
+      restLength = calcRestLength();
       segLen = restLength / NUM_LINKS;
       if (!isDragging) {
         for (var i = 0; i < NUM_POINTS; i++) {

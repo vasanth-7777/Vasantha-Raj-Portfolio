@@ -1479,11 +1479,507 @@ dialog#hire::backdrop{background:#000a;backdrop-filter:blur(3px)}
 .send{display:flex;align-items:center;gap:.8rem;background:#ece7e1;color:#1c1a17;border-radius:99px;padding:.4rem .4rem .4rem 1.4rem;font-weight:600;white-space:nowrap}
 .send span{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:#1c1a17;color:#ece7e1}
 
-@media(max-width:760px){
-  .proj{grid-template-columns:1fr}
-  .nav nav{gap:.8rem;font-size:.82rem}
-  .clock{display:none}
-  .arch-casing{width:185px;height:310px}
-  .doors-row{gap:1.2rem}
+
+/* Hide Batman pull chain when inside room modal on any device */
+body.room-open .rope-interactive{
+  display:none !important;
+  pointer-events:none !important;
+  visibility:hidden !important;
 }
+
+/* ==========================================================================
+   MOBILE RESPONSIVE UI SYSTEM (< 768px)
+   Protects Desktop UI 100% while fixing all mobile crash & collapse bugs
+   ========================================================================== */
+@media (max-width: 768px) {
+  /* Prevent horizontal drift & overflow on mobile */
+  html, body {
+    overflow-x: hidden !important;
+    max-width: 100vw !important;
+  }
+
+  /* 1. INTRO PRELOADER FIX (Fixes my_mobile.png squashing & overflow) */
+  .intro-preloader {
+    padding: 1.6rem 1.2rem;
+    justify-content: space-between;
+  }
+  .intro-preloader-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.35rem;
+    font-size: 0.75rem;
+  }
+  .preloader-brand {
+    font-size: 0.82rem;
+    font-weight: 700;
+  }
+  .preloader-roles {
+    font-size: 0.68rem;
+    line-height: 1.35;
+    opacity: 0.8;
+    white-space: normal;
+  }
+  .intro-pill-stack {
+    width: 100%;
+    max-width: 310px;
+    gap: 0.5rem;
+  }
+  .intro-pill {
+    padding: 0.85rem 1.2rem;
+    font-size: 0.96rem;
+    border-radius: 999px;
+  }
+  .intro-pill-stack.scatter .intro-pill:nth-child(1) { transform: translate(-10px, -10px) rotate(-3deg); opacity: 0; }
+  .intro-pill-stack.scatter .intro-pill:nth-child(2) { transform: translate(12px, 12px) rotate(3deg); opacity: 0; }
+  .intro-pill-stack.scatter .intro-pill:nth-child(3) { transform: translate(-10px, 12px) rotate(-2deg); opacity: 0; }
+  .intro-pill-stack.scatter .intro-pill:nth-child(4) { transform: translate(10px, 8px) rotate(2deg); opacity: 0; }
+
+  .intro-preloader-footer {
+    gap: 1rem;
+    align-items: flex-end;
+  }
+  .preloader-tag {
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+  }
+  .preloader-num {
+    font-size: clamp(3rem, 13vw, 4.2rem);
+    line-height: 0.9;
+  }
+  .preloader-bar {
+    width: clamp(90px, 32vw, 140px);
+    height: 2px;
+  }
+
+  /* 2. COMPACT BATMAN PULL CHAIN (No content obstruction or scroll hijack) */
+  .rope-interactive {
+    right: 8px !important;
+    width: 44px !important;
+    transform: scale(0.65);
+    transform-origin: top right;
+    z-index: 85;
+  }
+  .rope-bracket {
+    width: 36px;
+    height: 20px;
+  }
+
+  /* 3. CLEAN SINGLE-ROW SCROLLABLE NAVBAR (No wrapping collapse) */
+  .nav {
+    padding: 0.65rem 0.85rem !important;
+    padding-right: 4.2rem !important; /* leaves clean space for Batman chain */
+  }
+  .nav nav {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    gap: 0.75rem !important;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding-bottom: 2px;
+  }
+  .nav nav::-webkit-scrollbar {
+    display: none;
+  }
+  .nav nav a, .nav nav button {
+    white-space: nowrap !important;
+    font-size: 0.82rem !important;
+    flex-shrink: 0;
+  }
+  .clock {
+    display: none !important;
+  }
+
+  /* 4. INTRO HERO & SPIRAL DESK FLIP CALENDAR (No ring cut-through) */
+  .intro {
+    grid-template-columns: 1fr !important;
+    min-height: 0 !important;
+    padding: 1.2rem 1rem 0 !important;
+    gap: 1.5rem !important;
+  }
+  .intro-text {
+    padding-bottom: 0.5rem !important;
+  }
+  .intro-text h1 {
+    font-size: clamp(2rem, 9vw, 2.7rem) !important;
+    letter-spacing: -0.03em;
+  }
+  .intro-text p.tag {
+    font-size: 0.78rem;
+  }
+  .calendar-wrapper {
+    max-width: 100% !important;
+    margin: 1rem 0 1.2rem !important;
+  }
+  .calendar-rings {
+    padding: 0 14px !important;
+    margin-bottom: -11px !important;
+  }
+  .ring-loop {
+    width: 8px !important;
+    height: 22px !important;
+  }
+  .ring-hole {
+    width: 4px !important;
+    height: 4px !important;
+  }
+  .calendar-sheet {
+    padding: 1.3rem 1.1rem 0.8rem !important;
+    min-height: 110px !important;
+    border-radius: 16px !important;
+  }
+  .sheet-role {
+    font-size: clamp(1.4rem, 6.2vw, 1.85rem) !important;
+    line-height: 1.15 !important;
+  }
+  .sheet-count {
+    font-size: 0.75rem !important;
+  }
+  .sheet-layer {
+    border-radius: 16px !important;
+  }
+
+  /* Hero Actions & Social Pills */
+  .actions {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 0.5rem !important;
+    margin: 1.2rem 0 1rem !important;
+  }
+  .actions .btn {
+    margin: 0 !important;
+    font-size: 0.88rem !important;
+    padding: 0.65rem 1.1rem !important;
+  }
+  .social-row {
+    display: flex !important;
+    gap: 0.5rem !important;
+    width: 100% !important;
+    margin-top: 0.8rem !important;
+  }
+  .social-pill {
+    flex: 1 !important;
+    justify-content: center !important;
+    padding: 0.55rem 0.6rem !important;
+    font-size: 0.72rem !important;
+  }
+  .social-pill span {
+    font-size: 0.7rem !important;
+    letter-spacing: 0.04em !important;
+  }
+  .portrait {
+    justify-self: center !important;
+    max-width: 280px !important;
+    margin: 0 auto !important;
+  }
+  .chip {
+    font-size: 0.78rem !important;
+    padding: 0.55rem 0.9rem !important;
+    bottom: 12% !important;
+    left: 4% !important;
+  }
+
+  /* 5. DOORS SECTION (All 3 doors side by side in harmony, no vertical collapse) */
+  .doors-section {
+    padding: 3.5rem 1rem 3rem !important;
+  }
+  .doors-header {
+    margin-bottom: 1.8rem !important;
+  }
+  .doors-header h2.big {
+    font-size: clamp(1.6rem, 7vw, 2.1rem) !important;
+  }
+  .doors-header .sub {
+    font-size: 0.88rem !important;
+    margin: 0.5rem 0 0.8rem !important;
+  }
+  .doors-row {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: center !important;
+    align-items: flex-end !important;
+    gap: 0.55rem !important;
+    width: 100% !important;
+    flex-wrap: nowrap !important;
+  }
+  .door-wrapper {
+    flex: 1 !important;
+    max-width: 114px !important;
+    gap: 0.55rem !important;
+  }
+  .arch-casing {
+    width: 100% !important;
+    height: clamp(155px, 46vw, 185px) !important;
+    border-radius: 999px 999px 6px 6px !important;
+    box-shadow: 0 12px 28px rgba(0,0,0,0.45) !important;
+  }
+  .plate {
+    width: 68px !important;
+    padding: 0.3rem 0.12rem !important;
+  }
+  .plate-title {
+    font-size: 0.52rem !important;
+    letter-spacing: 0.07em !important;
+    line-height: 1.15 !important;
+  }
+  .plate-screw {
+    width: 3px !important;
+    height: 3px !important;
+  }
+  .handle-assembly {
+    bottom: 28% !important;
+    right: 10px !important;
+    transform: scale(0.68) !important;
+    transform-origin: center right;
+  }
+  .hint {
+    display: none !important;
+  }
+  .door-label h3 {
+    font-size: 0.74rem !important;
+    line-height: 1.2 !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .door-label small {
+    display: none !important;
+  }
+  .doors-row.zooming {
+    transform: scale(2.2) !important;
+    filter: none !important; /* prevents GPU blur memory crash on mobile */
+  }
+
+  /* Door Preview Stage */
+  .door-preview-stage {
+    margin-top: 1.6rem !important;
+    max-width: 100% !important;
+  }
+  .door-preview-card {
+    padding: 1.3rem 1rem !important;
+    border-radius: 18px !important;
+  }
+  .preview-title {
+    font-size: 1.25rem !important;
+  }
+  .preview-kicker {
+    font-size: 0.68rem !important;
+    letter-spacing: 0.07em !important;
+  }
+  .preview-checklist {
+    gap: 0.65rem !important;
+  }
+  .preview-checklist li {
+    font-size: 0.84rem !important;
+    gap: 0.55rem !important;
+  }
+  .chk-bubble {
+    width: 18px !important;
+    height: 18px !important;
+    min-width: 18px !important;
+  }
+  .preview-cta-btn {
+    width: 100% !important;
+    text-align: center !important;
+    justify-content: center !important;
+    margin-top: 1.2rem !important;
+  }
+
+  /* 6. STORY TIMELINE (Clean, non-colliding scroll) */
+  .story-section {
+    padding: 3.5rem 1rem 4.5rem !important;
+  }
+  .story-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.8rem !important;
+  }
+  .story-left {
+    position: relative !important;
+    top: 0 !important;
+    z-index: 1 !important;
+    padding: 0 0 0.5rem !important;
+  }
+  .story-radar {
+    width: 240px !important;
+    height: 240px !important;
+    margin-top: -120px !important;
+    margin-left: -120px !important;
+    opacity: 0.35 !important;
+  }
+  .story-title {
+    font-size: clamp(1.7rem, 7.5vw, 2.2rem) !important;
+  }
+  .giant-year {
+    font-size: clamp(3rem, 13vw, 4.2rem) !important;
+    margin-bottom: 0.4rem !important;
+  }
+  .story-right {
+    padding-left: 1.2rem !important;
+  }
+  .story-list {
+    padding: 0.5rem 0 1.5rem !important;
+    gap: 2rem !important;
+  }
+  .story-card .card-inner {
+    padding: 1.2rem 1rem !important;
+    border-radius: 16px !important;
+  }
+  .story-card h3 {
+    font-size: 1.02rem !important;
+  }
+  .story-card p {
+    font-size: 0.85rem !important;
+  }
+
+  /* 7. CTA & FOOTER */
+  .cta {
+    padding: 3.5rem 1rem !important;
+    text-align: center !important;
+  }
+  .cta-giant {
+    font-size: clamp(1.9rem, 8vw, 2.5rem) !important;
+  }
+  .cta-desc {
+    font-size: 0.92rem !important;
+  }
+  .cta-actions {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    gap: 0.5rem !important;
+  }
+  .cta-actions .btn {
+    margin: 0 !important;
+  }
+  .foot {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 1.8rem 1rem !important;
+    padding: 2.5rem 1rem 2rem !important;
+  }
+  .foot h4 {
+    font-size: 0.72rem !important;
+  }
+  .foot a, .foot button, .foot span {
+    font-size: 0.84rem !important;
+  }
+  .elsewhere-list .plain-link {
+    font-size: 0.86rem !important;
+  }
+  .legal {
+    margin-top: 1rem !important;
+    font-size: 0.76rem !important;
+  }
+
+  /* 8. ROOMS MODAL SYSTEM (Butter-smooth transitions & memory protection) */
+  .room {
+    z-index: 100 !important;
+  }
+  .room.entering {
+    animation: roomEnterMobile 0.35s ease-out forwards !important;
+  }
+  @keyframes roomEnterMobile {
+    0% { opacity: 0; transform: translateY(16px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  .room.leaving {
+    animation: roomLeaveMobile 0.25s ease-in forwards !important;
+  }
+  @keyframes roomLeaveMobile {
+    0% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(16px); }
+  }
+  .room .wrap {
+    padding: 2rem 1rem 3rem !important;
+  }
+  .room .me {
+    float: none !important;
+    display: block !important;
+    margin: 0 auto 1.5rem !important;
+    width: 110px !important;
+  }
+  .room h2.big {
+    font-size: clamp(1.7rem, 7.5vw, 2.3rem) !important;
+  }
+  .lead {
+    font-size: 0.96rem !important;
+    margin-bottom: 1.4rem !important;
+  }
+  .skills {
+    grid-template-columns: 1fr !important;
+    gap: 1.2rem !important;
+  }
+  .skills li {
+    font-size: 0.82rem !important;
+    padding: 0.2rem 0.65rem !important;
+  }
+  .sec {
+    font-size: 1.3rem !important;
+    margin: 2.4rem 0 0.4rem !important;
+  }
+  .sec-desc {
+    font-size: 0.85rem !important;
+    margin-bottom: 1.2rem !important;
+  }
+  .proj {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* 2-Column Responsive Video Reels Grid */
+  .video-grid-14, .video-grid-15, .creator-reels-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.65rem !important;
+    margin-bottom: 2rem !important;
+  }
+  .reel-card {
+    padding: 0.3rem !important;
+    border-radius: 12px !important;
+  }
+  .reel-card figcaption {
+    font-size: 0.72rem !important;
+    margin: 0.35rem 0.15rem 0.15rem !important;
+    line-height: 1.25 !important;
+  }
+
+  /* Photo Editing */
+  .photo-edits-section {
+    margin-top: 2.5rem !important;
+    padding-top: 1.5rem !important;
+  }
+  .photo-grid {
+    gap: 1.2rem !important;
+  }
+  .photo-compare-container {
+    grid-template-columns: 1fr !important;
+    gap: 1.2rem !important;
+  }
+
+  /* Creator Workflow */
+  .creator-content-box {
+    padding: 1.3rem 1rem !important;
+    border-radius: 18px !important;
+  }
+  .workflow-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.8rem !important;
+  }
+
+  /* Dialog Hire */
+  dialog#hire {
+    width: min(92vw, 420px) !important;
+    border-radius: 22px !important;
+  }
+  #hire-form {
+    padding: 1.3rem 1.1rem !important;
+    gap: 0.8rem !important;
+  }
+  #hire h2 {
+    font-size: 1.4rem !important;
+  }
+  #hire input, #hire textarea {
+    padding: 0.65rem 0.85rem !important;
+    font-size: 0.92rem !important;
+  }
+}
+
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation-duration:.01s!important;scroll-behavior:auto}}
